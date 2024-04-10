@@ -5,6 +5,8 @@ import base64
 import time
 import io
 import xlsxwriter
+import warnings
+warnings.filterwarnings('ignore')
 
 # GLiNER modelini yükle
 model = GLiNER.from_pretrained("urchade/gliner_medium-v2.1", use_fast = False)
