@@ -7,7 +7,7 @@ import io
 import xlsxwriter
 
 # GLiNER modelini yükle
-model = GLiNER.from_pretrained("urchade/gliner_multiv2.1", use_fast = False)
+model = GLiNER.from_pretrained("urchade/gliner_medium-v2.1", use_fast = False)
 
 linkedin_profile_link = "https://www.linkedin.com/in/huseyincenik/"
 kaggle_profile_link = "https://www.kaggle.com/huseyincenik/"
