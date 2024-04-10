@@ -101,7 +101,7 @@ def process_data_for_columns(data, column_details):
             st.info("Please try again.")
             process_data_for_columns(data, column_details)  # Call the model again
 def main():
-    st.title("🔎 NER (Named Entity Recognition) Application with Gliner Multiv2.1 🛠️")
+    st.title("🔎 NER (Named Entity Recognition) Application with Gliner Mediumv2.1 🛠️")
     st.write("For detailed information about the model, click [here](https://huggingface.co/spaces/urchade/gliner_multiv2.1)")
 
     
