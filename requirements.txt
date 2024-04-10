@@ -1,6 +1,6 @@
 gliner==0.1.7
 numpy==1.26.4
 openpyxl==3.1.2
-streamlit==1.31.0
+streamlit==1.33.0
 XlsxWriter==3.2.0
 scipy==1.10.1
