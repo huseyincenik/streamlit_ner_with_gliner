@@ -55,7 +55,9 @@ def enter_column_details(data, num_columns):
             select_column = st.selectbox(f"Select column {i+1}:", data.columns, key=f"select_column_{i}", help="Select the column from your dataset to use for creating the new column.")
             new_column_name = st.text_input(f"Enter the new column name {i+1}:", key=f"new_column_name_{i}", help="Enter the name of the new column to be created.")
             # Check if the new column name already exists in the data
-
+            if new_column_name in data.columns:
+                st.warning("The new column name already exists in the dataset. Please enter a different column name.")
+                continue
             label = st.text_input(f"Enter the label {i+1}:", key=f"label_{i}", help="Enter the label for Named Entity Recognition (NER) model. One expression or multiple expressions separated by commas can be written.")
             threshold = st.slider(f"Select threshold {i+1}:", min_value=0.0, max_value=1.0, value=0.5, step=0.01, key=f"threshold_{i}", help="Select the threshold for NER model.")
             column_details.append((select_column, new_column_name, label, threshold))
@@ -83,9 +85,6 @@ def process_data_for_columns(data, column_details, selected_model):
                 total_rows = len(data)
                 st.write(f"Number of total data: {total_rows}")
                 st.write("Processed data:")
-                if new_column_name in data.columns:
-                    st.error("The new column name already exists in the dataset. Please enter different column name.")
-                    continue
                 # Show all outputs in an expander
                 with st.expander(f"All Results for {new_column_name}"):
                     for index, row in data.iterrows():
