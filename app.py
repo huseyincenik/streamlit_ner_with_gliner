@@ -4,12 +4,6 @@ import pandas as pd
 import base64
 import time
 import io
-import xlsxwriter
-import warnings
-warnings.filterwarnings('ignore')
-
-# GLiNER modelini yükle
-model = GLiNER.from_pretrained("urchade/gliner_medium-v2.1", use_fast = False)
 
 linkedin_profile_link = "https://www.linkedin.com/in/huseyincenik/"
 kaggle_profile_link = "https://www.kaggle.com/huseyincenik/"
@@ -22,6 +16,13 @@ st.sidebar.markdown(
 )
 
 
+# GLiNER model seçenekleri
+models = {
+    "urchade/gliner_multi-v2.1": "urchade/gliner_multi-v2.1",
+    "urchade/gliner_medium-v2.1": "urchade/gliner_medium-v2.1",
+    "urchade/gliner_small-v2.1": "urchade/gliner_small-v2.1",
+    "urchade/gliner_large-v2.1": "urchade/gliner_large-v2.1"
+}
 
 # Function to load data
 def load_data():
@@ -40,8 +41,6 @@ def enter_number_of_columns():
     return num_columns
 
 # Function to enter new column details
-
-# Function to enter new column details
 def enter_column_details(data, num_columns):
     column_details = []
     for i in range(num_columns):
@@ -55,17 +54,21 @@ def enter_column_details(data, num_columns):
     return column_details
 
 # Function to process data and show results for each new column
-def process_data_for_columns(data, column_details):
+def process_data_for_columns(data, column_details, selected_model):
+    model = GLiNER.from_pretrained(selected_model, use_fast=False)
     for i, (selected_column, new_column_name, label, threshold) in enumerate(column_details):
-        st.header(f"Processed Data for **{new_column_name}** Column")
+        st.write(f"### Processed Data for **{new_column_name}**")
         selected_data = {
             'Selected Column': [selected_column],
             'New Column Name': [new_column_name],
             'Label': [label],
-            'Threshold': [threshold]
+            'Threshold': [threshold],
+            'Selected Model': [selected_model]
         }
         df_data = pd.DataFrame(selected_data)
-        st.dataframe(df_data)
+        st.write("Column Details:")
+        st.write(df_data)
+
         
         try:
             if selected_column in data.columns:
@@ -99,12 +102,15 @@ def process_data_for_columns(data, column_details):
             st.error(f"Error Message: {str(e)}")
             time.sleep(60)  # Wait for 1 minute
             st.info("Please try again.")
-            process_data_for_columns(data, column_details)  # Call the model again
-def main():
-    st.title("🔎 NER (Named Entity Recognition) Application with Gliner Mediumv2.1 🛠️")
-    st.write("For detailed information about the model, click [here](https://huggingface.co/spaces/urchade/gliner_multiv2.1)")
+            process_data_for_columns(data, column_details, selected_model)  # Call the model again
 
-    
+def main():
+    st.title("🔎 NER (Named Entity Recognition) Application with Gliner (v1)🛠️")
+    st.write("For detailed information about the models, click [here](https://huggingface.co/models?search=urchade%2Fgliner)")
+
+    # Model selection
+    selected_model = st.sidebar.selectbox("Select the GLiNER model:", list(models.keys()), index=1)  # Default: urchade/gliner_medium-v2.1
+
     # Load the data
     data = load_data()
     if data is not None:
@@ -116,8 +122,7 @@ def main():
         
         # Process the data and show results for each new column
         if st.sidebar.button("Process Data"):
-            process_data_for_columns(data, column_details)
-            st.snow()
+            process_data_for_columns(data, column_details, models[selected_model])
 
         # Download the data as Excel
         output_file = io.BytesIO()
