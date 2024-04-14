@@ -101,6 +101,7 @@ def process_data_for_columns(data, column_details, selected_model):
                         st.write(f"Result: {result}")
                         
                         # Assign to new column
+                        data[new_column_name] = data[new_column_name].astype('object')
                         data.at[index, new_column_name] = result
                 
                 st.success(f"Data processing completed for {new_column_name}.")
