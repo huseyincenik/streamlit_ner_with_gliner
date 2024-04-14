@@ -29,7 +29,7 @@ The application provides the following GLiNER models to choose from:
 
 ```bash
 git clone https://github.com/huseyincenik/streamlit_ner_with_gliner.git
-cd ner-application
+cd streamlit_ner_with_gliner
 ```
 
 2. Install the required dependencies:
