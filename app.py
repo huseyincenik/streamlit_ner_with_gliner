@@ -24,7 +24,7 @@ models = {
 }
 
 # Önbellek için GLiNER modeli
-@st.experimental_singleton
+@st.cache_resource
 def load_gliner_model(model_name):
     return GLiNER.from_pretrained(model_name, use_fast=False)
 
