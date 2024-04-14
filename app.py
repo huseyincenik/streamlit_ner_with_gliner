@@ -57,7 +57,7 @@ def enter_column_details(data, num_columns):
             # Check if the new column name already exists in the data
             if new_column_name in data.columns:
                 st.warning("The new column name already exists in the dataset. Please enter a different column name.")
-                continue
+                # continue
             label = st.text_input(f"Enter the label {i+1}:", key=f"label_{i}", help="Enter the label for Named Entity Recognition (NER) model. One expression or multiple expressions separated by commas can be written.")
             threshold = st.slider(f"Select threshold {i+1}:", min_value=0.0, max_value=1.0, value=0.5, step=0.01, key=f"threshold_{i}", help="Select the threshold for NER model.")
             column_details.append((select_column, new_column_name, label, threshold))
