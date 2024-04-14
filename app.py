@@ -92,7 +92,7 @@ def process_data_for_columns(data, column_details, selected_model):
                         st.write(f"Text {index + 1}: {text_to_process}")
                         entities = model.predict_entities(text_to_process, label.split(','), threshold=threshold)
                         if len(entities) == 0:
-                            result = ""
+                            result = "Unknown"
                         else:
                             if len(label.split(',')) == 1:
                                 result = ', '.join(set([entity['text'] for entity in entities]))
@@ -101,9 +101,8 @@ def process_data_for_columns(data, column_details, selected_model):
                         st.write(f"Result: {result}")
                         
                         # Assign to new column
-                        data[new_column_name] = data[new_column_name].astype('object')
-                        data.at[index, new_column_name] = result
-                
+                        data.at[index, new_column_name] = result if result != 'Unknown' else None
+
                 st.success(f"Data processing completed for {new_column_name}.")
             else:
                 st.error("The selected column was not found in the dataset.")
