@@ -15,7 +15,6 @@ st.sidebar.markdown(
     f"[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)]({github_profile_link})"
 )
 
-
 # GLiNER model seçenekleri
 models = {
     "urchade/gliner_multi-v2.1": "urchade/gliner_multi-v2.1",
@@ -24,16 +23,19 @@ models = {
     "urchade/gliner_large-v2.1": "urchade/gliner_large-v2.1"
 }
 
+# Önbellek için GLiNER modeli
+@st.experimental_singleton
+def load_gliner_model(model_name):
+    return GLiNER.from_pretrained(model_name, use_fast=False)
+
 # Function to load data
-def load_data():
-    uploaded_file = st.sidebar.file_uploader("Upload your data file (in CSV or Excel format)", type=["csv", "xlsx"])
-    if uploaded_file is not None:
-        if uploaded_file.name.endswith('.csv'):
-            data = pd.read_csv(uploaded_file)
-        elif uploaded_file.name.endswith('.xlsx'):
-            data = pd.read_excel(uploaded_file)
-        return data
-    return None
+@st.cache(allow_output_mutation=True)
+def load_data(file):
+    if file.name.endswith('.csv'):
+        data = pd.read_csv(file)
+    elif file.name.endswith('.xlsx'):
+        data = pd.read_excel(file)
+    return data
 
 # Function to enter the number of new columns
 def enter_number_of_columns():
@@ -55,9 +57,9 @@ def enter_column_details(data, num_columns):
 
 # Function to process data and show results for each new column
 def process_data_for_columns(data, column_details, selected_model):
-    model = GLiNER.from_pretrained(selected_model, use_fast=False)
+    model = load_gliner_model(selected_model)
     for i, (selected_column, new_column_name, label, threshold) in enumerate(column_details):
-        st.write(f"### Processed Data for **{new_column_name}**")
+        st.write(f"### Processed Data for **{new_column_name}** (Model: {selected_model})")
         selected_data = {
             'Selected Column': [selected_column],
             'New Column Name': [new_column_name],
@@ -77,7 +79,7 @@ def process_data_for_columns(data, column_details, selected_model):
                 st.write("Processed data:")
                 
                 # Show all outputs in an expander
-                with st.expander(f"All Results for {new_column_name} column."):
+                with st.expander(f"All Results for {new_column_name}"):
                     for index, row in data.iterrows():
                         text_to_process = row[selected_column]
                         st.write(f"Text {index + 1}: {text_to_process}")
@@ -94,7 +96,7 @@ def process_data_for_columns(data, column_details, selected_model):
                         # Assign to new column
                         data.at[index, new_column_name] = result
                 
-                st.success(f"Data processing completed for {new_column_name} column.")
+                st.success(f"Data processing completed for {new_column_name}.")
             else:
                 st.error("The selected column was not found in the dataset.")
         except Exception as e:
@@ -112,8 +114,10 @@ def main():
     selected_model = st.sidebar.selectbox("Select the GLiNER model:", list(models.keys()), index=1)  # Default: urchade/gliner_medium-v2.1
 
     # Load the data
-    data = load_data()
-    if data is not None:
+    file = st.sidebar.file_uploader("Upload your data file (in CSV or Excel format)", type=["csv", "xlsx"])
+    if file:
+        data = load_data(file)
+        
         # Enter the number of new columns
         num_columns = enter_number_of_columns()
         
