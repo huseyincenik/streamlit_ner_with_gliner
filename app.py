@@ -92,7 +92,7 @@ def process_data_for_columns(data, column_details, selected_model):
                         st.write(f"Text {index + 1}: {text_to_process}")
                         entities = model.predict_entities(text_to_process, label.split(','), threshold=threshold)
                         if len(entities) == 0:
-                            result = "Unknown"
+                            result = ""
                         else:
                             if len(label.split(',')) == 1:
                                 result = ', '.join(set([entity['text'] for entity in entities]))
